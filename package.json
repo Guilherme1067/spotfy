@@ -6,12 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:with-tests": "npm run test:run && npm run build",
+    "build:with-tests": "npm run test:run && npm run test:coverage && npm run build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:run": "vitest run",
+    "test:run": "vitest run --reporter=verbose",
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {

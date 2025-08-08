@@ -12,7 +12,8 @@ Uma aplicação React moderna para explorar artistas, álbuns e músicas do Spot
 - ⚡ **Performance Otimizada**: Carregamento rápido com React Query
 - 🔐 **Autenticação Robusta**: Sistema de autenticação com renovação automática de token
 - 🛡️ **Tratamento de Erros**: Interceptors inteligentes para lidar com tokens expirados
-- 🧪 **Testes Abrangentes**: Cobertura completa de componentes e funcionalidades
+- 🧪 **Testes Abrangentes**: 54 testes cobrindo todos os componentes principais
+- 🚀 **CI/CD Integrado**: Deploy automático com validação de testes
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -27,6 +28,8 @@ Uma aplicação React moderna para explorar artistas, álbuns e músicas do Spot
 - **Radix UI** - Componentes acessíveis
 - **Vitest** - Framework de testes
 - **Testing Library** - Testes de componentes
+- **User Event** - Simulação de interações realistas
+- **JSDOM** - Ambiente de teste para DOM
 
 ## 📦 Instalação
 
@@ -63,10 +66,12 @@ pnpm dev          # Inicia o servidor de desenvolvimento
 
 # Build
 pnpm build        # Gera build de produção
+pnpm build:with-tests # Build com testes (usado na Vercel)
 pnpm preview      # Visualiza o build de produção
 
 # Testes
-pnpm test         # Executa os testes
+pnpm test         # Executa os testes em modo watch
+pnpm test:run     # Executa todos os testes uma vez
 pnpm test:ui      # Interface visual para testes
 pnpm test:coverage # Testes com cobertura
 
@@ -142,7 +147,7 @@ O projeto implementa um sistema robusto de autenticação com:
 
 ## 🧪 Sistema de Testes
 
-O projeto inclui testes abrangentes e bem estruturados:
+O projeto inclui testes abrangentes e bem estruturados com **54 testes** cobrindo todos os componentes principais:
 
 ### **📋 Cobertura de Testes**
 - **Componentes**: Renderização, interações e estados
@@ -151,10 +156,10 @@ O projeto inclui testes abrangentes e bem estruturados:
 - **Integração**: Fluxos completos de usuário
 
 ### **🔍 Testes Implementados**
-- **SearchInput**: Testes completos de funcionalidade e UI
-- **TopTracks**: Validação de renderização e dados
-- **Hooks**: Testes de lógica de API e cache
-- **Interceptors**: Validação de renovação automática
+- **SearchInput** (17 testes): Funcionalidade completa, interações de usuário, validação de entrada
+- **Artists** (13 testes): Renderização de grid, navegação, estados de loading/erro
+- **ArtistDetails** (16 testes): Sistema de abas, busca, paginação, filtros
+- **API Interceptors** (8 testes): Renovação automática de token, tratamento de erros 401
 
 ### **⚙️ Configuração de Testes**
 ```bash
@@ -164,12 +169,22 @@ pnpm test
 # Executar com interface visual
 pnpm test:ui
 
+# Executar testes com output detalhado
+pnpm test:run
+
 # Verificar cobertura
 pnpm test:coverage
 
 # Executar testes em modo watch
 pnpm test:watch
 ```
+
+### **🎯 Tecnologias de Teste**
+- **Vitest**: Framework de testes rápido
+- **Testing Library**: Testes de componentes focados no usuário
+- **User Event**: Simulação realista de interações
+- **JSDOM**: Ambiente de teste para DOM
+- **Jest DOM**: Matchers adicionais para DOM
 
 ## 🎨 Design System
 
@@ -187,17 +202,100 @@ A aplicação utiliza um design system consistente com:
 - **Tablet**: Grid adaptativo com 2-3 colunas
 - **Mobile**: Layout em coluna única otimizado para toque
 
-## 🚀 Deploy
+## 🚀 Deploy e CI/CD
 
-### Vercel (Recomendado)
-1. Conecte seu repositório ao Vercel
-2. Configure as variáveis de ambiente
-3. Deploy automático a cada push
+### **🔧 Configuração de Deploy com Testes**
 
-### Netlify
-1. Build command: `pnpm build`
-2. Publish directory: `dist`
-3. Configure as variáveis de ambiente
+O projeto está configurado para **não fazer deploy se os testes falharem**:
+
+#### **Opção 1: Vercel Build Command (Recomendado)**
+```json
+// vercel.json
+{
+  "buildCommand": "npm run build:with-tests",
+  "outputDirectory": "dist"
+}
+```
+
+#### **Opção 2: GitHub Actions (Alternativa)**
+```yaml
+# .github/workflows/ci.yml
+jobs:
+  test: # Roda primeiro
+    - npm run test:run
+    - npm run build
+  
+  deploy: # Só roda se test passar
+    needs: test
+    - Deploy para Vercel
+```
+
+*Nota: Se usar GitHub Actions, os testes rodam no GitHub, não na Vercel*
+
+### **👀 Como Visualizar Testes na Vercel**
+
+**Os testes rodam diretamente na Vercel durante o build:**
+
+1. **Dashboard Vercel**:
+   - Vá para seu projeto na Vercel
+   - Clique na aba **"Deployments"**
+   - Clique no deploy mais recente
+   - Clique em **"View Build Logs"**
+
+2. **No log você verá**:
+   ```bash
+   [18:56:06] Running "npm run build:with-tests"
+   [18:56:06] > npm run test:run && npm run build
+   [18:56:06] 
+   [18:56:06] > vitest run --reporter=verbose
+   [18:56:06] ✓ src/lib/__tests__/api.test.ts (8 tests) 11ms
+   [18:56:06] ✓ src/components/__tests__/artists.test.tsx (13 tests) 442ms
+   [18:56:06] ✓ src/components/__tests__/artistDetails.test.tsx (16 tests) 653ms
+   [18:56:06] ✓ src/components/__tests__/searchInput.test.tsx (17 tests) 2725ms
+   [18:56:06] Test Files  4 passed (4)
+   [18:56:06] Tests  54 passed (54)
+   [18:56:06] 
+   [18:56:06] > tsc -b && vite build
+   [18:56:06] ✓ 1792 modules transformed.
+   ```
+
+**Se os testes falharem, o deploy para automaticamente!**
+
+### **📊 Exemplo de Output dos Testes**
+```bash
+✓ src/lib/__tests__/api.test.ts (8 tests) 13ms
+✓ src/components/__tests__/artists.test.tsx (13 tests) 441ms
+✓ src/components/__tests__/artistDetails.test.tsx (16 tests) 1036ms
+✓ src/components/__tests__/searchInput.test.tsx (17 tests) 2806ms
+
+Test Files  4 passed (4)
+Tests  54 passed (54)
+Duration  6.15s
+```
+
+### **🔧 Scripts de Build**
+```bash
+# Build normal
+pnpm build
+
+# Build com testes (usado na Vercel)
+pnpm build:with-tests
+
+# Testes com output detalhado
+pnpm test:run
+```
+
+### **📋 Configuração Manual na Vercel**
+1. Dashboard Vercel → Settings → General
+2. Build Command: `npm run build:with-tests`
+3. Output Directory: `dist`
+4. Install Command: `npm ci`
+
+### **🔐 Secrets para GitHub Actions** (Opcional)
+Se usar GitHub Actions em vez da Vercel Build Command, configure:
+- `VERCEL_TOKEN`: Token da Vercel
+- `VERCEL_ORG_ID`: ID da organização
+- `VERCEL_PROJECT_ID`: ID do projeto
 
 ## 🔧 Otimizações Implementadas
 
@@ -228,11 +326,28 @@ A aplicação utiliza um design system consistente com:
 5. Abra um Pull Request
 
 ### **📋 Checklist para Contribuições**
-- [ ] Testes passando
-- [ ] Código seguindo padrões do projeto
-- [ ] Documentação atualizada
-- [ ] Responsividade testada
-- [ ] Performance validada
+- [ ] **Testes passando** (`pnpm test:run`)
+- [ ] **Build funcionando** (`pnpm build:with-tests`)
+- [ ] **Código seguindo padrões** (`pnpm lint`)
+- [ ] **Documentação atualizada**
+- [ ] **Responsividade testada**
+- [ ] **Performance validada**
+- [ ] **Cobertura de testes adequada**
+
+### **🧪 Adicionando Novos Testes**
+```bash
+# Estrutura recomendada para novos testes
+src/components/__tests__/ComponentName.test.tsx
+src/hooks/__tests__/useHookName.test.ts
+src/lib/__tests__/utility.test.ts
+```
+
+### **📊 Padrões de Teste**
+- Use `userEvent` para interações realistas
+- Teste funcionalidade, não implementação
+- Cubra casos de sucesso e erro
+- Teste acessibilidade (roles, labels)
+- Use mocks para dependências externas
 
 ## 📄 Licença
 
