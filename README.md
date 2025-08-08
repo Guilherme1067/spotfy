@@ -10,7 +10,9 @@ Uma aplicação React moderna para explorar artistas, álbuns e músicas do Spot
 - 🔍 **Busca Inteligente**: Filtre álbuns e músicas por nome
 - 📱 **Responsivo**: Funciona perfeitamente em desktop, tablet e mobile
 - ⚡ **Performance Otimizada**: Carregamento rápido com React Query
-- 🔐 **Autenticação Simples**: Sistema de autenticação client credentials
+- 🔐 **Autenticação Robusta**: Sistema de autenticação com renovação automática de token
+- 🛡️ **Tratamento de Erros**: Interceptors inteligentes para lidar com tokens expirados
+- 🧪 **Testes Abrangentes**: Cobertura completa de componentes e funcionalidades
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -19,11 +21,12 @@ Uma aplicação React moderna para explorar artistas, álbuns e músicas do Spot
 - **Vite** - Build tool e dev server
 - **Tailwind CSS** - Estilização
 - **React Query (TanStack Query)** - Gerenciamento de estado e cache
-- **Axios** - Cliente HTTP com interceptors
+- **Axios** - Cliente HTTP com interceptors inteligentes
 - **React Router DOM** - Roteamento
 - **Lucide React** - Ícones
 - **Radix UI** - Componentes acessíveis
 - **Vitest** - Framework de testes
+- **Testing Library** - Testes de componentes
 
 ## 📦 Instalação
 
@@ -106,38 +109,54 @@ src/
 - Busca por nome da música
 - Ranking visual
 
-### 4. **Sistema de Autenticação**
+### 4. **Sistema de Autenticação Otimizado**
 - Autenticação client credentials
-- Interceptor de requisição automático
-- Armazenamento no localStorage
-- Hook de gerenciamento de token
+- Renovação automática de token
+- Interceptor inteligente para erros 401
+- Cache otimizado com React Query
 
-## 🔐 Sistema de Autenticação
+## 🔐 Sistema de Autenticação Avançado
 
-O projeto implementa um sistema simples de autenticação com:
+O projeto implementa um sistema robusto de autenticação com:
 
-- **Autenticação Client Credentials**: Usa o fluxo de credenciais do cliente do Spotify
-- **Interceptor de Requisição**: Adiciona automaticamente o token de acesso aos headers
-- **Hook de Token**: Gerencia a obtenção e armazenamento do token de acesso
-- **Cache Local**: Armazena o token no localStorage para persistência
+### **🔄 Renovação Automática de Token**
+- **Interceptor Inteligente**: Detecta automaticamente erros 401
+- **Renovação Transparente**: Renova o token sem intervenção manual
+- **Reexecução Automática**: Refaz a requisição original com o novo token
+- **Prevenção de Loops**: Evita loops infinitos com flag de controle
 
+### **⚡ Cache Otimizado**
+- **staleTime**: 50 minutos (dados considerados frescos)
+- **gcTime**: 1 hora (tempo em cache na memória)
+- **Retry Inteligente**: 3 tentativas com delay exponencial
+- **Performance**: Reduz requisições desnecessárias
+
+### **🛡️ Tratamento de Erros**
 ```typescript
-// O token é obtido automaticamente via hook
-const { data } = useGetAcessToken()
-
-// As requisições incluem automaticamente o token
-const { data: artists } = useGetArtists(artistIds)
+// Fluxo automático:
+// 1. Requisição com token atual
+// 2. Se 401 → Renovação automática
+// 3. Reexecução da requisição original
+// 4. Usuário não percebe interrupção
 ```
 
-## 🧪 Testes
+## 🧪 Sistema de Testes
 
-O projeto inclui testes abrangentes para:
+O projeto inclui testes abrangentes e bem estruturados:
 
-- **Componentes**: Testes de renderização e interação
-- **Hooks**: Testes de lógica de negócio
-- **API**: Testes de interceptors e hooks de autenticação
-- **Integração**: Testes de fluxos completos
+### **📋 Cobertura de Testes**
+- **Componentes**: Renderização, interações e estados
+- **Hooks**: Lógica de negócio e gerenciamento de estado
+- **API**: Interceptors e autenticação
+- **Integração**: Fluxos completos de usuário
 
+### **🔍 Testes Implementados**
+- **SearchInput**: Testes completos de funcionalidade e UI
+- **TopTracks**: Validação de renderização e dados
+- **Hooks**: Testes de lógica de API e cache
+- **Interceptors**: Validação de renovação automática
+
+### **⚙️ Configuração de Testes**
 ```bash
 # Executar todos os testes
 pnpm test
@@ -147,6 +166,9 @@ pnpm test:ui
 
 # Verificar cobertura
 pnpm test:coverage
+
+# Executar testes em modo watch
+pnpm test:watch
 ```
 
 ## 🎨 Design System
@@ -177,6 +199,26 @@ A aplicação utiliza um design system consistente com:
 2. Publish directory: `dist`
 3. Configure as variáveis de ambiente
 
+## 🔧 Otimizações Implementadas
+
+### **⚡ Performance**
+- **Cache Inteligente**: React Query com configurações otimizadas
+- **Lazy Loading**: Carregamento sob demanda de componentes
+- **Bundle Splitting**: Separação automática de código
+- **Image Optimization**: Otimização de imagens do Spotify
+
+### **🛡️ Robustez**
+- **Error Boundaries**: Tratamento gracioso de erros
+- **Loading States**: Estados de carregamento consistentes
+- **Retry Logic**: Tentativas automáticas em falhas
+- **Offline Support**: Cache local para dados essenciais
+
+### **🔐 Segurança**
+- **Token Management**: Gerenciamento seguro de tokens
+- **Environment Variables**: Configurações seguras
+- **Input Validation**: Validação de entradas do usuário
+- **XSS Protection**: Proteção contra ataques XSS
+
 ## 🤝 Contribuindo
 
 1. Fork o projeto
@@ -184,6 +226,13 @@ A aplicação utiliza um design system consistente com:
 3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
 4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
+
+### **📋 Checklist para Contribuições**
+- [ ] Testes passando
+- [ ] Código seguindo padrões do projeto
+- [ ] Documentação atualizada
+- [ ] Responsividade testada
+- [ ] Performance validada
 
 ## 📄 Licença
 
@@ -195,6 +244,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 - [React Query](https://tanstack.com/query) - Gerenciamento de estado
 - [Tailwind CSS](https://tailwindcss.com/) - Framework CSS
 - [Vite](https://vitejs.dev/) - Build tool
+- [Testing Library](https://testing-library.com/) - Framework de testes
 
 ## 📞 Suporte
 

@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { baseUrl } from "../lib/api";
-import { useGetAcessToken } from "./useGetAcessToken";
 
 
 export interface IArtist {
@@ -26,7 +25,6 @@ const fetchArtists = async ({ queryKey }: { queryKey: [string, string[]] }): Pro
 }
 
 export const useGetArtists = (artistiId: string[]) => {
-    useGetAcessToken();
     return useQuery({
         queryKey: ["get-artists", artistiId],
         queryFn: fetchArtists,

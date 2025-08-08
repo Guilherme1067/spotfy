@@ -1,6 +1,5 @@
 import { useGetArtists } from "../hooks/useGetArtists"
 import { Card, CardContent, CardDescription } from "./ui/card"
-import { useGetAcessToken } from "../hooks/useGetAcessToken";
 import { useNavigate } from "react-router-dom";
 import { ARTISTIS_ID } from "../consts/artistIds";
 
@@ -15,7 +14,6 @@ export const Artists = () => {
         navigate(`/artist/${artistId}`)
     }
 
-    useGetAcessToken();
     const { data: artists, error, isLoading } = useGetArtists(ARTISTIS_ID)
 
     if (isLoading) {

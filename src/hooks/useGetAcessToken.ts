@@ -30,6 +30,6 @@ const fetchAcessToken = async () => {
 export const useGetAcessToken = () => {
     return useQuery({
         queryKey: ["access-token"],
-        queryFn: fetchAcessToken
+        queryFn: fetchAcessToken,
     })
 }
