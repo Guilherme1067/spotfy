@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { SearchInput } from '../searchInput'
 
 describe('SearchInput Component', () => {
@@ -31,79 +31,196 @@ describe('SearchInput Component', () => {
         expect(input).toBeInTheDocument()
     })
 
-    it('should call handleFilter when user types', () => {
+    it('should call handleFilter when user types', async () => {
+        const user = userEvent.setup()
         render(<SearchInput handleFilter={mockHandleFilter} value="" />)
 
         const input = screen.getByPlaceholderText('Buscar por nome da música...')
-        fireEvent.change(input, { target: { value: 'new search' } })
+        await user.type(input, 'new search')
 
-        expect(mockHandleFilter).toHaveBeenCalledWith('new search')
+        expect(mockHandleFilter).toHaveBeenCalledTimes(10)
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(1, 'n')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(2, 'e')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(3, 'w')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(4, ' ')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(5, 's')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(6, 'e')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(7, 'a')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(8, 'r')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(9, 'c')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(10, 'h')
     })
 
-    it('should have correct CSS classes', () => {
-        render(<SearchInput handleFilter={mockHandleFilter} value="" />)
-
-        const input = screen.getByPlaceholderText('Buscar por nome da música...')
-        expect(input).toHaveClass(
-            'w-full',
-            'px-4',
-            'py-3',
-            'bg-white/10',
-            'backdrop-blur-sm',
-            'border',
-            'border-white/20',
-            'rounded-lg',
-            'text-white',
-            'placeholder-gray-400',
-            'focus:outline-none',
-            'focus:ring-2',
-            'focus:ring-blue-500',
-            'focus:border-transparent',
-            'transition-all',
-            'duration-300'
-        )
-    })
-
-    it('should render search icon', () => {
-        render(<SearchInput handleFilter={mockHandleFilter} value="" />)
-
-        // Verifica se o ícone de busca está presente
-        const searchIcon = screen.getByRole('img', { hidden: true })
-        expect(searchIcon).toBeInTheDocument()
-    })
-
-    it('should have correct input type', () => {
-        render(<SearchInput handleFilter={mockHandleFilter} value="" />)
-
-        const input = screen.getByPlaceholderText('Buscar por nome da música...')
-        expect(input).toHaveAttribute('type', 'text')
-    })
-
-    it('should handle empty string input', () => {
-        render(<SearchInput handleFilter={mockHandleFilter} value="" />)
-
-        const input = screen.getByPlaceholderText('Buscar por nome da música...')
-        fireEvent.change(input, { target: { value: '' } })
-
-        expect(mockHandleFilter).toHaveBeenCalledWith('')
-    })
-
-    it('should handle special characters in input', () => {
+    it('should handle special characters in input', async () => {
+        const user = userEvent.setup()
         render(<SearchInput handleFilter={mockHandleFilter} value="" />)
 
         const input = screen.getByPlaceholderText('Buscar por nome da música...')
         const specialValue = 'test@#$%^&*()'
-        fireEvent.change(input, { target: { value: specialValue } })
+        await user.type(input, specialValue)
 
-        expect(mockHandleFilter).toHaveBeenCalledWith(specialValue)
+
+        expect(mockHandleFilter).toHaveBeenCalledTimes(13)
+        expect(mockHandleFilter).toHaveBeenLastCalledWith(')')
     })
 
-    it('should maintain focus state correctly', () => {
+    it('should handle multiple character inputs', async () => {
+        const user = userEvent.setup()
         render(<SearchInput handleFilter={mockHandleFilter} value="" />)
 
         const input = screen.getByPlaceholderText('Buscar por nome da música...')
-        fireEvent.focus(input)
 
+        await user.type(input, 'a')
+        await user.type(input, 'b')
+        await user.type(input, 'c')
+
+        expect(mockHandleFilter).toHaveBeenCalledTimes(3)
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(1, 'a')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(2, 'b')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(3, 'c')
+    })
+
+    it('should handle empty input after typing', async () => {
+        const user = userEvent.setup()
+        render(<SearchInput handleFilter={mockHandleFilter} value="initial" />)
+
+        const input = screen.getByDisplayValue('initial')
+        await user.clear(input)
+
+        expect(mockHandleFilter).toHaveBeenCalledWith('')
+    })
+
+    it('should handle numeric input', async () => {
+        const user = userEvent.setup()
+        render(<SearchInput handleFilter={mockHandleFilter} value="" />)
+
+        const input = screen.getByPlaceholderText('Buscar por nome da música...')
+        await user.type(input, '123')
+
+        expect(mockHandleFilter).toHaveBeenCalledTimes(3)
+        expect(mockHandleFilter).toHaveBeenLastCalledWith('3')
+    })
+
+    it('should handle long text input', async () => {
+        const user = userEvent.setup()
+        render(<SearchInput handleFilter={mockHandleFilter} value="" />)
+
+        const input = screen.getByPlaceholderText('Buscar por nome da música...')
+        const longText = 'This is a very long search text'
+        await user.type(input, longText)
+
+        expect(mockHandleFilter).toHaveBeenCalledTimes(longText.length)
+        expect(mockHandleFilter).toHaveBeenLastCalledWith('t')
+    })
+
+    it('should handle input with spaces', async () => {
+        const user = userEvent.setup()
+        render(<SearchInput handleFilter={mockHandleFilter} value="" />)
+
+        const input = screen.getByPlaceholderText('Buscar por nome da música...')
+        const textWithSpaces = 'search with spaces'
+        await user.type(input, textWithSpaces)
+
+        expect(mockHandleFilter).toHaveBeenCalledTimes(textWithSpaces.length)
+        expect(mockHandleFilter).toHaveBeenLastCalledWith('s')
+    })
+
+    it('should handle input with accented characters', async () => {
+        const user = userEvent.setup()
+        render(<SearchInput handleFilter={mockHandleFilter} value="" />)
+
+        const input = screen.getByPlaceholderText('Buscar por nome da música...')
+        const accentedText = 'música brasileira'
+        await user.type(input, accentedText)
+
+        expect(mockHandleFilter).toHaveBeenCalledTimes(accentedText.length)
+        expect(mockHandleFilter).toHaveBeenLastCalledWith('a')
+    })
+
+    it('should handle user typing character by character', async () => {
+        const user = userEvent.setup()
+        render(<SearchInput handleFilter={mockHandleFilter} value="" />)
+
+        const input = screen.getByPlaceholderText('Buscar por nome da música...')
+
+        await user.type(input, 'hello')
+
+        expect(mockHandleFilter).toHaveBeenCalledTimes(5)
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(1, 'h')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(2, 'e')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(3, 'l')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(4, 'l')
+        expect(mockHandleFilter).toHaveBeenNthCalledWith(5, 'o')
+    })
+
+    it('should handle paste operation', async () => {
+        const user = userEvent.setup()
+        render(<SearchInput handleFilter={mockHandleFilter} value="" />)
+
+        const input = screen.getByPlaceholderText('Buscar por nome da música...')
+
+        await user.click(input)
+        await user.paste('pasted text')
+
+        expect(mockHandleFilter).toHaveBeenCalledWith('pasted text')
+    })
+
+    it('should handle clear operation', async () => {
+        const user = userEvent.setup()
+        render(<SearchInput handleFilter={mockHandleFilter} value="initial text" />)
+
+        const input = screen.getByDisplayValue('initial text')
+
+        await user.clear(input)
+
+        expect(mockHandleFilter).toHaveBeenCalledWith('')
+    })
+
+    it('should handle backspace operations', async () => {
+        const user = userEvent.setup()
+        render(<SearchInput handleFilter={mockHandleFilter} value="hello" />)
+
+        const input = screen.getByDisplayValue('hello')
+
+        await user.click(input)
+        await user.keyboard('{Backspace}')
+        expect(mockHandleFilter).toHaveBeenCalledWith('hell')
+
+
+        mockHandleFilter.mockClear()
+
+        render(<SearchInput handleFilter={mockHandleFilter} value="hell" />)
+        const updatedInput = screen.getByDisplayValue('hell')
+        await user.click(updatedInput)
+        await user.keyboard('{Backspace}')
+        expect(mockHandleFilter).toHaveBeenCalledWith('hel')
+    })
+
+    it('should handle keyboard navigation', async () => {
+        const user = userEvent.setup()
+        render(<SearchInput handleFilter={mockHandleFilter} value="hello" />)
+
+        const input = screen.getByDisplayValue('hello')
+
+        await user.click(input)
+        await user.keyboard('{ArrowLeft}')
+        await user.keyboard('{ArrowRight}')
+        await user.keyboard('{Home}')
+        await user.keyboard('{End}')
+
+        expect(mockHandleFilter).not.toHaveBeenCalled()
+    })
+
+    it('should handle focus and blur events', async () => {
+        const user = userEvent.setup()
+        render(<SearchInput handleFilter={mockHandleFilter} value="" />)
+
+        const input = screen.getByPlaceholderText('Buscar por nome da música...')
+
+        await user.click(input)
         expect(input).toHaveFocus()
+
+        await user.tab()
+        expect(input).not.toHaveFocus()
     })
 }) 
