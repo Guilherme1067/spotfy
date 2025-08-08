@@ -7,20 +7,22 @@ import { ArtistDetails } from './components/artistDetails';
 import { queryClient } from './lib/react-query';
 import { Suspense } from 'react';
 import { Loading } from './components/loading';
+import { Layout } from './components/layout';
 
 
 
 function App() {
   return (
-
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Suspense fallback={<Loading />}>
-          <Routes>
-            <Route path="/" element={<Artists />} />
-            <Route path="/artist/:artistId" element={<ArtistDetails />} />
-          </Routes>
-        </Suspense>
+        <Layout>
+          <Suspense fallback={<Loading />}>
+            <Routes>
+              <Route path="/" element={<Artists />} />
+              <Route path="/artist/:artistId" element={<ArtistDetails />} />
+            </Routes>
+          </Suspense>
+        </Layout>
       </BrowserRouter>
     </QueryClientProvider>
   )

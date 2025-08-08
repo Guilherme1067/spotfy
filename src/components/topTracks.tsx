@@ -72,14 +72,6 @@ export const TopTracks = ({ artistId }: { artistId: string; }) => {
                 ))}
             </div>
 
-            {/* Empty state for filtered results */}
-            {trackFilter && filteredTracks?.length === 0 && (
-                <div className="text-center py-12">
-                    <div className="text-gray-400 text-6xl mb-4">🎵</div>
-                    <h3 className="text-xl font-semibold text-white mb-2">Nenhuma música encontrada</h3>
-                    <p className="text-gray-400">Tente buscar por outro termo</p>
-                </div>
-            )}
         </div>
     )
 }

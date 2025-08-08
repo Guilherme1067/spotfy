@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useGetTopTracks } from "../../hooks/useGetTopTracks";
 
 export const useTopTracks = (artistId: string) => {
@@ -6,7 +6,12 @@ export const useTopTracks = (artistId: string) => {
     const [trackFilter, setTrackFilter] = useState('');
 
 
-    const filteredTracks = topTracks?.tracks.filter(track => track.name.toLowerCase().includes(trackFilter.toLowerCase()))
+    const filteredTracks = useMemo(() => 
+        topTracks?.tracks.filter(track => 
+            track.name.toLowerCase().includes(trackFilter.toLowerCase())
+        ), 
+        [topTracks?.tracks, trackFilter]
+    )
 
     return {
         filteredTracks,
