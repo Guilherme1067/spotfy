@@ -25,7 +25,6 @@ interface IAlbumReponse {
 
 const fetchAlbum = async ({ queryKey }: { queryKey: [string, string, number] }): Promise<IAlbumReponse> => {
     const [, artistId, offset] = queryKey;
-    console.log({ queryKey })
     const res = await baseUrl.get(`/artists/${artistId}/albums?include_groups=album&limit=10&offset=${offset}`);
 
     return res.data
