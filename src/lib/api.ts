@@ -7,7 +7,7 @@ export const baseUrl = axios.create({
     }
 })
 
-// Função para renovar o token
+
 const refreshToken = async () => {
     const params = new URLSearchParams({
         grant_type: "client_credentials"
@@ -50,7 +50,7 @@ baseUrl.interceptors.response.use(
 
                 return baseUrl(originalRequest)
             } catch {
-                // Se falhar ao renovar o token, retorna o erro original
+
                 return Promise.reject(error)
             }
         }

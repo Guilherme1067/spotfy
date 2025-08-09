@@ -23,16 +23,16 @@ interface IAlbumReponse {
 
 }
 
-const fetchAlbum = async ({ queryKey }: { queryKey: [string, string, number] }): Promise<IAlbumReponse> => {
-    const [, artistId, offset] = queryKey;
-    const res = await baseUrl.get(`/artists/${artistId}/albums?include_groups=album&limit=10&offset=${offset}`);
+const fetchAlbum = async ({ queryKey }: { queryKey: [string, string, number, number] }): Promise<IAlbumReponse> => {
+    const [, artistId, offset, limit] = queryKey;
+    const res = await baseUrl.get(`/artists/${artistId}/albums?include_groups=album&limit=${limit}&offset=${offset}`);
 
     return res.data
 }
 
-export const useGetArtistAlbum = (artistId: string, offset: number) => {
+export const useGetArtistAlbum = (artistId: string, offset: number, limit: number) => {
     return useQuery({
-        queryKey: ["get-artist-album", artistId, offset],
+        queryKey: ["get-artist-album", artistId, offset, limit],
         queryFn: fetchAlbum,
     })
 }

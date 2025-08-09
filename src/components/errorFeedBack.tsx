@@ -1,6 +1,7 @@
 import { AlertTriangle, Home } from "lucide-react"
 import { Button } from "./ui/button"
 import { Card, CardContent } from "./ui/card"
+import { useNavigate } from "react-router-dom"
 
 interface ErrorFeedBackProps {
     title?: string
@@ -14,9 +15,10 @@ export const ErrorFeedBack = ({
     message = "Não foi possível carregar o conteúdo. Tente novamente mais tarde.",
 }: ErrorFeedBackProps) => {
 
+    const navigate = useNavigate()
 
     const handleGoHome = () => {
-        window.location.href = '/'
+        navigate('/')
     }
 
     return (
@@ -24,7 +26,6 @@ export const ErrorFeedBack = ({
             <div className="max-w-2xl mx-auto">
                 <Card className="group bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 ease-in-out hover:scale-105 shadow-lg hover:shadow-2xl">
                     <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-                        {/* Error Icon */}
                         <div className="relative mb-8">
                             <div className="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mb-4">
                                 <AlertTriangle className="w-12 h-12 text-red-400" />

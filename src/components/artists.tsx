@@ -37,7 +37,6 @@ export const Artists = () => {
                 <p className="text-gray-400 text-lg">Descubra os melhores artistas da música</p>
             </div>
 
-            {/* Artists Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                 {artists?.map(artist => (
                     <Card
@@ -52,7 +51,6 @@ export const Artists = () => {
                                     alt={`Foto de ${artist.name}`}
                                     className="w-full h-full object-cover rounded-lg group-hover:brightness-110 transition-all duration-300"
                                 />
-                                {/* Overlay on hover */}
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 rounded-lg flex items-center justify-center">
                                     <div className="opacity-0 group-hover:opacity-100 transition-all duration-300">
                                         <div className="bg-white/90 rounded-full p-3">
