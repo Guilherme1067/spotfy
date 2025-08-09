@@ -5,6 +5,7 @@ import { ARTISTIS_ID } from "../consts/artistIds";
 
 import { ErrorFeedBack } from "./errorFeedBack";
 import { Loading } from "./loading";
+import { Play } from "lucide-react";
 
 export const Artists = () => {
     const navigate = useNavigate();
@@ -54,9 +55,7 @@ export const Artists = () => {
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 rounded-lg flex items-center justify-center">
                                     <div className="opacity-0 group-hover:opacity-100 transition-all duration-300">
                                         <div className="bg-white/90 rounded-full p-3">
-                                            <svg className="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                                            </svg>
+                                            <Play className="w-6 h-6 text-black" fill="currentColor" />
                                         </div>
                                     </div>
                                 </div>
